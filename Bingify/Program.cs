@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Serilog;
+using Serilog.Events;
 
 namespace Bingify
 {
@@ -11,7 +13,29 @@ namespace Bingify
     {
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+                .Enrich.FromLogContext()
+                .WriteTo.File(@"C:\temp\Bingify.txt")
+                .CreateLogger();
+
+            try
+            {
+                Log.Information("Bingify Starting");
+                CreateHostBuilder(args).Build().Run();
+            }
+            catch (Exception)
+            {
+                Log.Fatal("There was a problem starting the serice");
+                return;
+            }
+            finally
+            {
+                Log.CloseAndFlush();
+            }
+
+            
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
@@ -19,6 +43,6 @@ namespace Bingify
                 .ConfigureServices((hostContext, services) =>
                 {
                     services.AddHostedService<Worker>();
-                });
+                }).UseWindowsService().UseSerilog();
     }
 }

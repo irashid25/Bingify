@@ -25,18 +25,18 @@ namespace Bingify
         {
             try
             {
-                this.logger.LogInformation("Bingify running at: {time}", DateTimeOffset.Now);
-
                 // check if directories exist - should have read permissions on these folders
                 if (!Directory.Exists(SPOTLIGHT_FOLDER_PATH))
                 {
                     this.logger.LogError("Windows spotlight is not enabled");
+                    this.logger.LogError(SPOTLIGHT_FOLDER_PATH);
                     throw new Exception();
                 }
 
                 if (!Directory.Exists(PICTURE_FOLDER))
                 {
                     this.logger.LogError("Picture folder does not exist");
+                    this.logger.LogError(PICTURE_FOLDER);
                     throw new Exception();
                 }
 
