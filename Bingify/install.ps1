@@ -6,18 +6,18 @@ If (Get-Service $serviceName -ErrorAction SilentlyContinue) {
 
     If ((Get-Service $serviceName).Status -eq 'Running') {
 
-        Write-Host "Stopping $serviceName"
+        Write-Host "Stopping service: $serviceName"
         sc.exe STOP $ServiceName
-        Write-Host "$serviceName stopped"
+        Write-Host "$serviceName service has been stopped."
 
     } Else {
 
-        Write-Host "$serviceName found, but it is not running."
+        Write-Host "$serviceName service found, but it is not running."
     }
 
-    Write-Host "deleteing service: $serviceName"
+    Write-Host "Deleting service: $serviceName"
     sc.exe DELETE $ServiceName
-    Write-Host "$serviceName deleted"
+    Write-Host "$serviceName service has been deleted."
 } 
 
 $MyCredential = Get-Credential
@@ -39,6 +39,6 @@ $credentialsObject = new-object -typename System.Management.Automation.PSCredent
 
 New-Service -Name $serviceName -BinaryPathName "$publishDirectory\Bingify.exe" -Credential $credentialsObject -Description "Bingify Service" -DisplayName $serviceName -StartupType Automatic
 
+Write-Host "Starting service: $serviceName"
 Start-Service -Name $serviceName
-
-Get-Service -Name $serviceName
+Write-Host "$serviceName service has been started."
